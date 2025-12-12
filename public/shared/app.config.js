@@ -268,6 +268,7 @@ module.exports = {
     advertisement: {
       label: "advertisement",
       productType: "advertisement",
+      searchIndex: "advertisement",
       path: "advertisement",
       url: "/advertisement",
       api: {
