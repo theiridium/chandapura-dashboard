@@ -6,7 +6,7 @@ export async function getSearchResult({ searchParams, page = 1 }: { searchParams
     let sort: any = [];
     if (searchParams.q === "*") sort.push("updatedAt:desc");
     let filters = searchParams?.publish_status ? ["publish_status = true"] : ["publish_status = false"];
-    if (searchParams?.filter) filters = [...filters, searchParams.filter];
+    if (searchParams?.filter) filters = [...filters, ...searchParams.filter];
     const result = await getPublicSingleSearchResponse({
         indexUid: searchParams.index,
         q: searchParams.q,
@@ -14,7 +14,7 @@ export async function getSearchResult({ searchParams, page = 1 }: { searchParams
         noExpFilter: searchParams?.noExpFilter,
         sort: sort,
         page: page,
-        hitsPerPage: 10,
+        hitsPerPage: searchParams?.hitsPerPage
     });
     return result;
 }

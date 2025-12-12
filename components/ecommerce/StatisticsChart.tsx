@@ -1,9 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 // import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import ChartTab from "../common/ChartTab";
 import dynamic from "next/dynamic";
+import { getProductCountOfCurrentYear } from "@/lib/helper";
+import { Products } from "@/public/shared/app.config";
 
 // Dynamically import the ReactApexChart component
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
@@ -11,13 +13,42 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 });
 
 export default function StatisticsChart() {
+  const [counts, setCounts] = useState<any>({
+    advertisement: [],
+    business: [],
+    realEstate: [],
+    classifieds: [],
+    job: []
+  });
+  useEffect(() => {
+    async function loadData() {
+      const [
+        advertisement,
+        business,
+        realEstate,
+        classifieds,
+        job]: any = await Promise.all([
+          getProductCountOfCurrentYear(Products.advertisement.searchIndex),
+          getProductCountOfCurrentYear(Products.business.searchIndex),
+          getProductCountOfCurrentYear(Products.realEstate.searchIndex),
+          getProductCountOfCurrentYear(Products.classifieds.searchIndex),
+          getProductCountOfCurrentYear(Products.job.searchIndex)
+        ]);
+      setCounts({ advertisement, business, realEstate, classifieds, job });
+    }
+    loadData();
+  }, []);
+  useEffect(() => {
+    console.log(counts)
+  }, [counts])
+  
   const options: ApexOptions = {
     legend: {
       show: false, // Hide legend
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#465FFF", "#9CB9FF"], // Define line colors
+    colors: ["#465FFF", "#f0ff46", "#d146ff", "#46ff7e", "#ff8d46"], // Define line colors
     chart: {
       fontFamily: "Outfit, sans-serif",
       height: 310,
@@ -111,12 +142,24 @@ export default function StatisticsChart() {
 
   const series = [
     {
-      name: "Sales",
-      data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
+      name: "Advertisements",
+      data: counts.advertisement,
     },
     {
-      name: "Revenue",
-      data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+      name: "Business Listings",
+      data: counts.business,
+    },
+    {
+      name: "Property Listings",
+      data: counts.realEstate,
+    },
+    {
+      name: "Classified Listings",
+      data: counts.classifieds,
+    },
+    {
+      name: "Job Listings",
+      data: counts.job,
     },
   ];
   return (
@@ -127,7 +170,7 @@ export default function StatisticsChart() {
             Statistics
           </h3>
           <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-            Target you’ve set for each month
+            Listings added for each month
           </p>
         </div>
         <div className="flex items-start w-full gap-3 sm:justify-end">

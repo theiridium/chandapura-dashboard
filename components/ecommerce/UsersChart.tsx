@@ -5,7 +5,7 @@ import { MoreDotIcon } from "@/icons";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
-import { getUserDataByCurrentYear } from "@/lib/helper";
+import { getUserCountOfCurrentYear } from "@/lib/helper";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -16,7 +16,7 @@ export default function UsersChart() {
 
   useEffect(() => {
     async function loadData() {
-      const data = await getUserDataByCurrentYear(); // returns array of 12 numbers
+      const data = await getUserCountOfCurrentYear(); // returns array of 12 numbers
       setChartData(data);
     }
 

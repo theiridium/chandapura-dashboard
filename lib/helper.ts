@@ -27,9 +27,8 @@ export const getProductCountPending = async (index: string) => {
     return results[0].totalHits;
 }
 
-export const getUserDataByCurrentYear = async () => {
+export const getUserCountOfCurrentYear = async () => {
     const data = await getPublicApiResponse("users");
-    console.log(data)
     const currentYear = new Date().getFullYear();
 
     // Create an array of 12 months with count = 0
@@ -37,6 +36,45 @@ export const getUserDataByCurrentYear = async () => {
 
     data.forEach((user: any) => {
         const date = new Date(user.createdAt);
+        const year = date.getFullYear();
+
+        // Only count for current year
+        if (year === currentYear) {
+            const month = date.getMonth(); // 0 = Jan, 11 = Dec
+            monthlyCounts[month] += 1;
+        }
+    });
+    return monthlyCounts;
+}
+
+export const getProductCountOfCurrentYear = async (index: string) => {
+    const currentYear = new Date().getFullYear();
+
+    const start = Math.floor(new Date(`${currentYear}-01-01T00:00:00.000Z`).getTime() / 1000);
+    const end = Math.floor(new Date(`${currentYear + 1}-01-01T00:00:00.000Z`).getTime() / 1000);
+
+    const searchParams: any = {
+        q: "*",
+        index,
+        noExpFilter: true,
+        publish_status: true,
+        filter: [
+            `created_at_timestamp >= ${start}`,
+            `created_at_timestamp < ${end}`
+        ],
+        hitsPerPage: 5000
+    };
+
+    const search = { searchParams, page: 1 };
+    const { results } = await getSearchResult(search);
+    console.log(results)
+    const data = results[0].hits;
+
+    // Create an array of 12 months with count = 0
+    const monthlyCounts = Array(12).fill(0);
+
+    data.forEach((d: any) => {
+        const date = new Date(d.createdAt);
         const year = date.getFullYear();
 
         // Only count for current year
