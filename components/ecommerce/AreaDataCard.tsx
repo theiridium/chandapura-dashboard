@@ -8,7 +8,6 @@ export default function AreaDataCard() {
     async function loadData() {
       const data: any = await getAreaBasedListingCounts("bar");
       const chartData = data?.areas.sort((a: any, b: any) => b.count - a.count);
-      console.log(chartData)
       setAreaChartData(chartData);
     }
 

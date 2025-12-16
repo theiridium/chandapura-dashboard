@@ -106,29 +106,33 @@ export const getProductCount1 = async (props: any) => {
 
 export const getAreaBasedListingCounts = async (chartType: "table" | "bar") => {
     const listingIndices = [Products.business.searchIndex, Products.realEstate.searchIndex, Products.classifieds.searchIndex, Products.job.searchIndex];
-    const searchParams: any = {
+    const baseSearchParams = {
         q: "",
         facetQuery: ["area.name"],
         noExpFilter: true,
         publish_status: true,
         hitsPerPage: 1
     };
-    const search = { searchParams, page: 1 };
     const [blAreaCount, plAreaCount, clAreaCount, jlAreacount] = await Promise.all(
         listingIndices.map(async index => {
-            search.searchParams.index = index;
+            const search = {
+                searchParams: {
+                    ...baseSearchParams,
+                    index
+                },
+                page: 1
+            };
             const res = await getSearchResultFacets(search);
             return res.facetDistribution["area.name"];
         })
     );
-
     const result = {
         blAreaCount,
         plAreaCount,
         clAreaCount,
         jlAreacount
     }
-    console.log(result)
+    // console.log(result)
     let areaData = null;
     chartType === "bar" ? areaData = calculateOverallAreaStats(result) : areaData = buildAreaListingStats(result);
     return areaData;
@@ -182,13 +186,21 @@ function buildAreaListingStats(
     const result: AreaListingStats[] = [];
 
     console.log(data)
+    let id = 0;
     for (const area of areaSet) {
+        const blCount = data.blAreaCount[area] ?? 0;
+        const plCount = data.plAreaCount[area] ?? 0;
+        const clCount = data.clAreaCount[area] ?? 0;
+        const jlCount = data.jlAreacount[area] ?? 0;
+
         result.push({
+            id: id++,
             name: area,
-            blCount: data.blAreaCount[area] ?? 0,
-            plCount: data.plAreaCount[area] ?? 0,
-            clCount: data.clAreaCount[area] ?? 0,
-            jlCount: data.jlAreacount[area] ?? 0
+            blCount,
+            plCount,
+            clCount,
+            jlCount,
+            total: blCount + plCount + clCount + jlCount
         });
     }
 

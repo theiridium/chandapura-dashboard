@@ -250,9 +250,11 @@ export interface AreaStatsResult {
 }
 
 export interface AreaListingStats {
+  id: number;
   name: string;
   blCount: number;
   plCount: number;
   clCount: number;
   jlCount: number;
+  total: number;
 }
