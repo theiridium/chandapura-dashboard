@@ -3,10 +3,11 @@ import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
 import StatisticsChart from "@/components/ecommerce/StatisticsChart";
 import RecentOrders from "@/components/ecommerce/RecentOrders";
-import DemographicCard from "@/components/ecommerce/DemographicCard";
 import { DashboardMetricsTop } from "@/components/dashboard/DashboardMetricsTop";
 import { DashboardMetricsBottom } from "@/components/dashboard/DashboardMetricsBottom";
 import UsersChart from "@/components/ecommerce/UsersChart";
+import AreaDataCard from "@/components/ecommerce/AreaDataCard";
+import AreaTable from "@/components/ecommerce/AreaTable";
 
 export const metadata: Metadata = {
   title:
@@ -18,29 +19,29 @@ export default function Ecommerce() {
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
       <div className="col-span-12 space-y-6 xl:col-span-7">
-        <DashboardMetricsTop />
+        {/* <DashboardMetricsTop />
 
-        <UsersChart />
+        <UsersChart /> */}
       </div>
 
       <div className="col-span-12 xl:col-span-5">
-        <MonthlyTarget />
+        {/* <MonthlyTarget /> */}
       </div>
 
       <div className="col-span-12 space-y-6">
-        <DashboardMetricsBottom />
+        {/* <DashboardMetricsBottom /> */}
       </div>
 
       <div className="col-span-12">
-        <StatisticsChart />
+        {/* <StatisticsChart /> */}
       </div>
 
       <div className="col-span-12 xl:col-span-5">
-        <DemographicCard />
+        <AreaDataCard />
       </div>
 
       <div className="col-span-12 xl:col-span-7">
-        <RecentOrders />
+        <AreaTable />
       </div>
     </div>
   );

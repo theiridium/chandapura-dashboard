@@ -226,3 +226,33 @@ export interface RazOrderPayload {
     customerPhone: string
     itemName: string
 }
+
+export type Area = string;
+export type AreaCountMap = Record<Area, number>;
+
+export interface ListingAreaCounts {
+    blAreaCount: AreaCountMap;
+    plAreaCount: AreaCountMap;
+    clAreaCount: AreaCountMap;
+    jlAreacount: AreaCountMap;
+}
+
+export interface AreaStat {
+  name: string;
+  count: number;
+  percentage: number;
+}
+
+export interface AreaStatsResult {
+  total: number;
+  areas: AreaStat[];
+  listingAreaCounts: ListingAreaCounts;
+}
+
+export interface AreaListingStats {
+  name: string;
+  blCount: number;
+  plCount: number;
+  clCount: number;
+  jlCount: number;
+}

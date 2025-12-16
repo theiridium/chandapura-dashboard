@@ -281,6 +281,12 @@ module.exports = {
         isPublishedFilter: `filters[publish_status][$eq]=true&filters[payment_details][expiry_date_timestamp][$gt]=${currentDate}`,
       },
     },
+    area: {
+      label: "area",
+      productType: "area",
+      searchIndex: "area",
+      searchSuggestIndex: "area"
+    },
     termsConditions: {
       api: {
         base: "legal-document?fields=terms_conditions",

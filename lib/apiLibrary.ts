@@ -179,6 +179,40 @@ export const userResetPassword = async (payload: User.PasswordReset) => {
 
 const searchHost: any = process.env.NEXT_PUBLIC_MEILISEARCH_URL
 export const getPublicSingleSearchResponse = async (payload: SearchPayload | undefined) => {
+    try {
+        // await new Promise(resolve => setTimeout(resolve, 3000))
+        let headersList = {
+            Accept: "application/json",
+            'Access-Control-Allow-Origin': '*',
+            Authorization: "Bearer " + process.env.MEILISEARCH_TOKEN,
+            "Content-Type": "application/json"
+        }
+        let filters = payload?.filter;
+        (!!filters) && !payload?.noExpFilter && (filters = [...filters, "publish_status = true", `payment_details.expiry_date_timestamp > ${currentDate}`, 'payment_details.isPaymentSuccess = true']);
+        let bodyContent = JSON.stringify({
+            "q": payload?.q,
+            "filter": filters,
+            "facets": payload?.searchFacets,
+            "sort": payload?.sort,
+            "page": payload?.page,
+            "hitsPerPage": payload?.hitsPerPage
+        });
+        let reqOptions = {
+            url: `${searchHost}/indexes/${payload?.indexUid}/search`,
+            method: "POST",
+            headers: headersList,
+            data: bodyContent,
+        }
+        let response = await axios.request(reqOptions).catch(err => err.response);
+        // console.log(response)
+        return response.data;
+    }
+    catch (err: any) {
+        return err
+    }
+}
+
+export const getPublicMultiSearchResponse = async (payload: SearchPayload | undefined) => {
     // await new Promise(resolve => setTimeout(resolve, 3000))
     let headersList = {
         Accept: "application/json",
@@ -208,6 +242,7 @@ export const getPublicSingleSearchResponse = async (payload: SearchPayload | und
         data: bodyContent,
     }
     let response = await axios.request(reqOptions).catch(err => err.response);
+    // console.log(response)
     return response.data;
 }
 

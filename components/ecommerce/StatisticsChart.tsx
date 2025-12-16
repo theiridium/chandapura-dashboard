@@ -38,9 +38,6 @@ export default function StatisticsChart() {
     }
     loadData();
   }, []);
-  useEffect(() => {
-    console.log(counts)
-  }, [counts])
   
   const options: ApexOptions = {
     legend: {
@@ -48,7 +45,7 @@ export default function StatisticsChart() {
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#465FFF", "#f0ff46", "#d146ff", "#46ff7e", "#ff8d46"], // Define line colors
+    colors: ["#465FFF", "#6246ff", "#d146ff", "#46ff7e", "#ff8d46"], // Define line colors
     chart: {
       fontFamily: "Outfit, sans-serif",
       height: 310,
@@ -139,7 +136,7 @@ export default function StatisticsChart() {
       },
     },
   };
-
+  
   const series = [
     {
       name: "Advertisements",
@@ -173,9 +170,9 @@ export default function StatisticsChart() {
             Listings added for each month
           </p>
         </div>
-        <div className="flex items-start w-full gap-3 sm:justify-end">
+        {/* <div className="flex items-start w-full gap-3 sm:justify-end">
           <ChartTab />
-        </div>
+        </div> */}
       </div>
 
       <div className="max-w-full overflow-x-auto custom-scrollbar">
