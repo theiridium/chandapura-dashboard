@@ -184,8 +184,7 @@ function buildAreaListingStats(
 
     // Build final list
     const result: AreaListingStats[] = [];
-
-    console.log(data)
+    
     let id = 0;
     for (const area of areaSet) {
         const blCount = data.blAreaCount[area] ?? 0;

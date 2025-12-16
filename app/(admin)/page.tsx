@@ -4,7 +4,7 @@ import { DashboardMetricsTop } from "@/components/dashboard/DashboardMetricsTop"
 import { DashboardMetricsBottom } from "@/components/dashboard/DashboardMetricsBottom";
 import UsersChart from "@/components/ecommerce/UsersChart";
 import AreaDataCard from "@/components/ecommerce/AreaDataCard";
-import AreaTable from "@/components/ecommerce/AreaTable";
+import PendingApprovals from "@/components/ecommerce/PendingApprovals";
 
 export default function Ecommerce() {
   return (
@@ -32,7 +32,7 @@ export default function Ecommerce() {
       </div>
 
       <div className="col-span-12 xl:col-span-7">
-        <AreaTable />
+        <PendingApprovals />
       </div>
     </div>
   );

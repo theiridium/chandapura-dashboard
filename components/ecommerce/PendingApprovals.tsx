@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { getAreaBasedListingCounts } from "@/lib/helper";
 import { AreaListingStats } from "@/lib/typings/dto";
 
-export default function AreaTable() {
+export default function PendingApprovals() {
   const [areaTableData, setAreaTableData] = useState<AreaListingStats[]>();
   useEffect(() => {
     async function loadData() {
@@ -28,10 +28,10 @@ export default function AreaTable() {
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Listing Count Per Category
+            Pending Approvals
           </h3>
           <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-            Count of listings based on listing category by area
+            Requested Approval for below listings
           </p>
         </div>
 
