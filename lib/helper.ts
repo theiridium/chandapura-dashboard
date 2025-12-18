@@ -3,13 +3,18 @@ import { getPublicApiResponse } from "./apiLibrary";
 import { Products } from "@/public/shared/app.config";
 import { AreaListingStats, AreaStat, AreaStatsResult, ListingAreaCounts } from "./typings/dto";
 
+export const capitalizeWords = (str: string) =>
+    str
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, char => char.toUpperCase());
+
 export const getProductCountPublished = async (index: string) => {
-    const searchParams: any = {
+    const searchParams: any[] = [{
         q: "*",
         index,
         noExpFilter: true,
         publish_status: true
-    };
+    }];
 
     const search = { searchParams, page: 1 };
     const { results } = await getSearchResult(search);
@@ -17,12 +22,12 @@ export const getProductCountPublished = async (index: string) => {
 }
 
 export const getProductCountPending = async (index: string) => {
-    const searchParams: any = {
+    const searchParams: any[] = [{
         q: "*",
         index,
         noExpFilter: true,
         publish_status: false
-    };
+    }];
 
     const search = { searchParams, page: 1 };
     const { results } = await getSearchResult(search);
@@ -55,7 +60,7 @@ export const getProductCountOfCurrentYear = async (index: string) => {
     const start = Math.floor(new Date(`${currentYear}-01-01T00:00:00.000Z`).getTime() / 1000);
     const end = Math.floor(new Date(`${currentYear + 1}-01-01T00:00:00.000Z`).getTime() / 1000);
 
-    const searchParams: any = {
+    const searchParams: any[] = [{
         q: "*",
         index,
         noExpFilter: true,
@@ -65,7 +70,7 @@ export const getProductCountOfCurrentYear = async (index: string) => {
             `created_at_timestamp < ${end}`
         ],
         hitsPerPage: 5000
-    };
+    }];
 
     const search = { searchParams, page: 1 };
     const { results } = await getSearchResult(search);
@@ -92,16 +97,20 @@ export const getUserCount = async () => {
     return data;
 }
 
-export const getProductCount1 = async (props: any) => {
-    let searchFilter = props.category && `category.slug = ${props.category}`
-    let res = null;
-    if (props.searchParams && props.searchParams.q) {
-        props.searchParams.filter = searchFilter;
-        props.searchParams.noExpFilter = true;
-        let search = { searchParams: props.searchParams, page: 1 };
-        res = await getSearchResult(search);
-        return res;
-    }
+export const getPendingApprovalListingCounts = async () => {
+    const listingIndices = [Products.advertisement.searchIndex, Products.business.searchIndex, Products.realEstate.searchIndex, Products.classifieds.searchIndex, Products.job.searchIndex];
+    const searchParams = listingIndices.map(index => ({
+        q: "*",
+        index,
+        noExpFilter: true,
+        publish_status: false,
+        filter: ["step_number = 4"],
+        hitsPerPage: 100
+    }));
+    const search = { searchParams, page: 1 };
+    const { results } = await getSearchResult(search);
+    console.log(results)
+    return results;
 }
 
 export const getAreaBasedListingCounts = async (chartType: "table" | "bar") => {
@@ -184,7 +193,7 @@ function buildAreaListingStats(
 
     // Build final list
     const result: AreaListingStats[] = [];
-    
+
     let id = 0;
     for (const area of areaSet) {
         const blCount = data.blAreaCount[area] ?? 0;

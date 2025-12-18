@@ -212,7 +212,7 @@ export const getPublicSingleSearchResponse = async (payload: SearchPayload | und
     }
 }
 
-export const getPublicMultiSearchResponse = async (payload: SearchPayload | undefined) => {
+export const getPublicMultiSearchResponse = async (payload: SearchPayload[] | undefined) => {
     // await new Promise(resolve => setTimeout(resolve, 3000))
     let headersList = {
         Accept: "application/json",
@@ -220,20 +220,23 @@ export const getPublicMultiSearchResponse = async (payload: SearchPayload | unde
         Authorization: "Bearer " + process.env.MEILISEARCH_TOKEN,
         "Content-Type": "application/json"
     }
-    let filters = payload?.filter;
-    (!!filters) && !payload?.noExpFilter && (filters = [...filters, "publish_status = true", `payment_details.expiry_date_timestamp > ${currentDate}`, 'payment_details.isPaymentSuccess = true']);
+    const queries: any[] = [];
+    payload?.map(data => {
+        let filters = data?.filter;
+        (!!filters) && !data?.noExpFilter && (filters = [...filters, "publish_status = true", `payment_details.expiry_date_timestamp > ${currentDate}`, 'payment_details.isPaymentSuccess = true']);
+        queries.push({
+            "indexUid": data?.indexUid,
+            "q": data?.q,
+            "filter": filters,
+            "facets": data?.searchFacets,
+            "sort": data?.sort,
+            "page": data?.page,
+            "hitsPerPage": data?.hitsPerPage
+        })
+    })
+
     let bodyContent = JSON.stringify({
-        "queries": [
-            {
-                "indexUid": payload?.indexUid,
-                "q": payload?.q,
-                "filter": filters,
-                "facets": payload?.searchFacets,
-                "sort": payload?.sort,
-                "page": payload?.page,
-                "hitsPerPage": payload?.hitsPerPage
-            }
-        ]
+        "queries": queries
     });
     let reqOptions = {
         url: searchHost + 'multi-search',

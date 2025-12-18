@@ -34,7 +34,7 @@ const navItems: NavItem[] = [
     // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
   {
-    icon: <GridIcon />,
+    icon: <TableIcon />,
     name: "Area Based Data",
     path: "/area-data",
     // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
