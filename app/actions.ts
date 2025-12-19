@@ -1,6 +1,6 @@
 'use server'
 
-import { getPublicMultiSearchResponse, getPublicSingleSearchResponse } from "@/lib/apiLibrary";
+import { getPublicMultiSearchCustomResponse, getPublicMultiSearchResponse, getPublicSingleSearchResponse } from "@/lib/apiLibrary";
 
 export async function getSearchResult({ searchParams, page = 1 }: { searchParams: any[], page: number }) {
     const searchParamList: any[] = [];
@@ -13,13 +13,31 @@ export async function getSearchResult({ searchParams, page = 1 }: { searchParams
             indexUid: searchParam.index,
             q: searchParam.q,
             filter: filters,
-            noExpFilter: searchParam?.noExpFilter,
+            expFilter: searchParam?.expFilter,
             sort: sort,
             page: page,
             hitsPerPage: searchParam?.hitsPerPage
         })
     })
     const result = await getPublicMultiSearchResponse(searchParamList);
+    return result;
+}
+export async function getSearchResultMultiCustom({ searchParams, page = 1 }: { searchParams: any[], page: number }) {
+    const searchParamList: any[] = [];
+    searchParams.map(searchParam => {
+        let sort: any = [];
+        if (searchParam.q === "*") sort.push("updatedAt:desc");
+        searchParamList.push({
+            indexUid: searchParam.index,
+            q: searchParam.q,
+            filter: searchParam.filter,
+            expFilter: searchParam?.expFilter,
+            sort: sort,
+            page: page,
+            hitsPerPage: searchParam?.hitsPerPage
+        })
+    })
+    const result = await getPublicMultiSearchCustomResponse(searchParamList);
     return result;
 }
 export async function getSearchResultSingle({ searchParams, page = 1 }: { searchParams: any, page: number }) {
@@ -31,7 +49,7 @@ export async function getSearchResultSingle({ searchParams, page = 1 }: { search
         indexUid: searchParams.index,
         q: searchParams.q,
         filter: filters,
-        noExpFilter: searchParams?.noExpFilter,
+        expFilter: searchParams?.expFilter,
         sort: sort,
         page: page,
         hitsPerPage: searchParams?.hitsPerPage
@@ -49,7 +67,7 @@ export async function getSearchResultFacets({ searchParams, page = 1 }: { search
         q: searchParams.q,
         filter: filters,
         searchFacets: searchParams?.facetQuery,
-        noExpFilter: searchParams?.noExpFilter,
+        expFilter: searchParams?.expFilter,
         sort: sort,
         page: page,
         hitsPerPage: searchParams?.hitsPerPage

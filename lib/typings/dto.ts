@@ -8,7 +8,7 @@ export interface SearchPayload {
     indexUid: string
     q: string | any
     filter?: string[] | any
-    noExpFilter?: boolean
+    expFilter?: boolean
     searchFacets?: any[]
     sort?: any[]
     page?: number

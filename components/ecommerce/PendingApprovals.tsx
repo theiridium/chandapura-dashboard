@@ -2,14 +2,17 @@
 import { useEffect, useState } from "react";
 import { capitalizeWords, getAreaBasedListingCounts, getPendingApprovalListingCounts } from "@/lib/helper";
 import Button from "../ui/button/Button";
+import { useRouter } from "next/navigation";
 
 export default function PendingApprovals() {
+  const router = useRouter()
   const [pendingApprovalData, setPendingApprovalData] = useState<any[]>();
   useEffect(() => {
     async function loadData() {
       const data: any = await getPendingApprovalListingCounts();
       const listingData: any = data.map((x: any) => ({
         listingType: capitalizeWords(x.indexUid),
+        link: "/listings/" + x.indexUid,
         count: x.totalHits
       }));
 
@@ -44,7 +47,7 @@ export default function PendingApprovals() {
             </div>
 
             <div>
-              <Button size="sm" variant="outline" disabled={!a.count}>
+              <Button onClick={() => router.push(a.link)} size="sm" variant="outline" disabled={!a.count}>
                 {a.count} pending approval
               </Button>
             </div>

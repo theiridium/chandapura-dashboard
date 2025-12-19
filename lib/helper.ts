@@ -1,4 +1,4 @@
-import { getSearchResult, getSearchResultFacets } from "@/app/actions";
+import { getSearchResult, getSearchResultFacets, getSearchResultMultiCustom } from "@/app/actions";
 import { getPublicApiResponse } from "./apiLibrary";
 import { Products } from "@/public/shared/app.config";
 import { AreaListingStats, AreaStat, AreaStatsResult, ListingAreaCounts } from "./typings/dto";
@@ -12,7 +12,7 @@ export const getProductCountPublished = async (index: string) => {
     const searchParams: any[] = [{
         q: "*",
         index,
-        noExpFilter: true,
+        expFilter: false,
         publish_status: true
     }];
 
@@ -25,7 +25,7 @@ export const getProductCountPending = async (index: string) => {
     const searchParams: any[] = [{
         q: "*",
         index,
-        noExpFilter: true,
+        expFilter: false,
         publish_status: false
     }];
 
@@ -63,7 +63,7 @@ export const getProductCountOfCurrentYear = async (index: string) => {
     const searchParams: any[] = [{
         q: "*",
         index,
-        noExpFilter: true,
+        expFilter: false,
         publish_status: true,
         filter: [
             `created_at_timestamp >= ${start}`,
@@ -97,19 +97,39 @@ export const getUserCount = async () => {
     return data;
 }
 
+export const getlListingData = async (searchIndex: string) => {
+    const filters = [
+        [],
+        ["step_number = 4", "publish_status = true"],
+        ["step_number = 4", "publish_status = false"],
+        ["step_number < 4", "publish_status = false"]
+    ];
+    const searchParams = filters.map(filter => ({
+        q: "*",
+        index: searchIndex,
+        expFilter: false,
+        publish_status: false,
+        filter,
+        hitsPerPage: 100
+    }));
+    const search = { searchParams, page: 1 };
+    const { results } = await getSearchResultMultiCustom(search);
+    console.log(results)
+    return results;
+}
+
 export const getPendingApprovalListingCounts = async () => {
     const listingIndices = [Products.advertisement.searchIndex, Products.business.searchIndex, Products.realEstate.searchIndex, Products.classifieds.searchIndex, Products.job.searchIndex];
     const searchParams = listingIndices.map(index => ({
         q: "*",
         index,
-        noExpFilter: true,
+        expFilter: false,
         publish_status: false,
         filter: ["step_number = 4"],
         hitsPerPage: 100
     }));
     const search = { searchParams, page: 1 };
     const { results } = await getSearchResult(search);
-    console.log(results)
     return results;
 }
 
@@ -118,7 +138,7 @@ export const getAreaBasedListingCounts = async (chartType: "table" | "bar") => {
     const baseSearchParams = {
         q: "",
         facetQuery: ["area.name"],
-        noExpFilter: true,
+        expFilter: false,
         publish_status: true,
         hitsPerPage: 1
     };

@@ -188,7 +188,7 @@ export const getPublicSingleSearchResponse = async (payload: SearchPayload | und
             "Content-Type": "application/json"
         }
         let filters = payload?.filter;
-        (!!filters) && !payload?.noExpFilter && (filters = [...filters, "publish_status = true", `payment_details.expiry_date_timestamp > ${currentDate}`, 'payment_details.isPaymentSuccess = true']);
+        (!!filters) && payload?.expFilter && (filters = [...filters, "publish_status = true", `payment_details.expiry_date_timestamp > ${currentDate}`, 'payment_details.isPaymentSuccess = true']);
         let bodyContent = JSON.stringify({
             "q": payload?.q,
             "filter": filters,
@@ -223,11 +223,48 @@ export const getPublicMultiSearchResponse = async (payload: SearchPayload[] | un
     const queries: any[] = [];
     payload?.map(data => {
         let filters = data?.filter;
-        (!!filters) && !data?.noExpFilter && (filters = [...filters, "publish_status = true", `payment_details.expiry_date_timestamp > ${currentDate}`, 'payment_details.isPaymentSuccess = true']);
+        (!!filters) && data?.expFilter && (filters = [...filters, "publish_status = true", `payment_details.expiry_date_timestamp > ${currentDate}`, 'payment_details.isPaymentSuccess = true']);
         queries.push({
             "indexUid": data?.indexUid,
             "q": data?.q,
             "filter": filters,
+            "facets": data?.searchFacets,
+            "sort": data?.sort,
+            "page": data?.page,
+            "hitsPerPage": data?.hitsPerPage
+        })
+    })
+
+    let bodyContent = JSON.stringify({
+        "queries": queries
+    });
+    let reqOptions = {
+        url: searchHost + 'multi-search',
+        method: "POST",
+        headers: headersList,
+        data: bodyContent,
+    }
+    let response = await axios.request(reqOptions).catch(err => err.response);
+    // console.log(response)
+    return response.data;
+}
+
+export const getPublicMultiSearchCustomResponse = async (payload: SearchPayload[] | undefined) => {
+    // await new Promise(resolve => setTimeout(resolve, 3000))
+    let headersList = {
+        Accept: "application/json",
+        'Access-Control-Allow-Origin': '*',
+        Authorization: "Bearer " + process.env.MEILISEARCH_TOKEN,
+        "Content-Type": "application/json"
+    }
+    const queries: any[] = [];
+    payload?.map(data => {
+        let filters = data?.filter;
+        data?.expFilter && (filters = [...filters, "publish_status = true", `payment_details.expiry_date_timestamp > ${currentDate}`, 'payment_details.isPaymentSuccess = true']);
+        queries.push({
+            "indexUid": data?.indexUid,
+            "q": data?.q,
+            "filter": data?.filter,
             "facets": data?.searchFacets,
             "sort": data?.sort,
             "page": data?.page,

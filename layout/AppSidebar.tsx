@@ -39,6 +39,17 @@ const navItems: NavItem[] = [
     path: "/area-data",
     // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
+  {
+    icon: <BoxCubeIcon />,
+    name: "Listings",
+    subItems: [
+      { name: "Advertisement", path: "/listings/ad-listing", pro: false },
+      { name: "Business Listing", path: "/listings/business-listing", pro: false },
+      { name: "Property Listing", path: "/listings/property-listing", pro: false },
+      { name: "Classified Listing", path: "/listings/classified-listing", pro: false },
+      { name: "Job Listing", path: "/listings/job-listing", pro: false },
+    ],
+  },
   // {
   //   icon: <CalenderIcon />,
   //   name: "Calendar",
