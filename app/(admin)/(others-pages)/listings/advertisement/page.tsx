@@ -4,8 +4,10 @@ import { getlListingData } from "@/lib/helper";
 import { Products } from "@/public/shared/app.config";
 import AdvertisementPa from "@/components/sub-components/pending-approvals/AdvertisementPa";
 import AdvertisementDraft from "@/components/sub-components/drafts/AdvertisementDraft";
+import Button from "@/components/ui/button/Button";
 
 export default function Page() {
+  const adminLink = process.env.NEXT_PUBLIC_STRAPI_COLLECTION_URL + "api::advertisement.advertisement"
   const [listingData, setListingData] = useState<any[]>();
   useEffect(() => {
     async function loadData() {
@@ -22,7 +24,12 @@ export default function Page() {
   }, []);
   return (
     <div>
-      <h2 className="text-lg font-medium text-gray-800 dark:text-white mb-5 ml-5">Advertisement</h2>
+      <div className="flex justify-between mb-5 ml-5">
+        <h2 className="text-lg font-medium text-gray-800 dark:text-white">Advertisement</h2>
+        <Button onClick={() => window.open(adminLink, "_blank")} size="sm" variant="primary">
+          Admin Link
+        </Button>
+      </div>
       <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
