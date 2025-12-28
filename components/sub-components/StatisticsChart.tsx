@@ -1,190 +1,180 @@
 "use client";
-import React, { useEffect, useState } from "react";
-// import Chart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
-import ChartTab from "../common/ChartTab";
-import dynamic from "next/dynamic";
-import { getProductCountOfCurrentYear } from "@/lib/helper";
-import { Products } from "@/public/shared/app.config";
 
-// Dynamically import the ReactApexChart component
+import React, { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { ApexOptions } from "apexcharts";
+import { getProductCountByYear } from "@/lib/helper";
+import { Products } from "@/public/shared/app.config";
+import ChartTab from "../common/ChartTab";
+
+// Apex chart (client only)
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
+const CURRENT_YEAR = new Date().getFullYear();
+const YEARS_TO_FETCH = 5;
+
+type YearData = {
+  year: number;
+  advertisement: number[];
+  business: number[];
+  realEstate: number[];
+  classifieds: number[];
+  job: number[];
+};
+
 export default function StatisticsChart() {
-  const [counts, setCounts] = useState<any>({
-    advertisement: [],
-    business: [],
-    realEstate: [],
-    classifieds: [],
-    job: []
-  });
+  const [yearsData, setYearsData] = useState<YearData[]>([]);
+  const [selectedYear, setSelectedYear] = useState<number>(CURRENT_YEAR);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function loadData() {
-      const [
-        advertisement,
-        business,
-        realEstate,
-        classifieds,
-        job]: any = await Promise.all([
-          getProductCountOfCurrentYear(Products.advertisement.searchIndex),
-          getProductCountOfCurrentYear(Products.business.searchIndex),
-          getProductCountOfCurrentYear(Products.realEstate.searchIndex),
-          getProductCountOfCurrentYear(Products.classifieds.searchIndex),
-          getProductCountOfCurrentYear(Products.job.searchIndex)
-        ]);
-      setCounts({ advertisement, business, realEstate, classifieds, job });
+      setLoading(true);
+
+      const years = Array.from(
+        { length: YEARS_TO_FETCH },
+        (_, i) => CURRENT_YEAR - i
+      );
+
+      const results = await Promise.all(
+        years.map(async (year) => {
+          const [
+            advertisement,
+            business,
+            realEstate,
+            classifieds,
+            job,
+          ] = await Promise.all([
+            getProductCountByYear(Products.advertisement.searchIndex, year),
+            getProductCountByYear(Products.business.searchIndex, year),
+            getProductCountByYear(Products.realEstate.searchIndex, year),
+            getProductCountByYear(Products.classifieds.searchIndex, year),
+            getProductCountByYear(Products.job.searchIndex, year),
+          ]);
+
+          const total =
+            advertisement.total +
+            business.total +
+            realEstate.total +
+            classifieds.total +
+            job.total;
+
+          // ⛔ skip year if everything is zero
+          if (total === 0) return null;
+
+          return {
+            year,
+            advertisement: advertisement.monthlyCounts,
+            business: business.monthlyCounts,
+            realEstate: realEstate.monthlyCounts,
+            classifieds: classifieds.monthlyCounts,
+            job: job.monthlyCounts,
+          };
+        })
+      );
+
+      const filtered = results.filter(Boolean) as YearData[];
+
+      setYearsData(filtered);
+      setSelectedYear(filtered[0]?.year ?? CURRENT_YEAR);
+      setLoading(false);
     }
+
     loadData();
   }, []);
-  
-  const options: ApexOptions = {
-    legend: {
-      show: false, // Hide legend
-      position: "top",
-      horizontalAlign: "left",
-    },
-    colors: ["#465FFF", "#6246ff", "#d146ff", "#46ff7e", "#ff8d46"], // Define line colors
-    chart: {
-      fontFamily: "Outfit, sans-serif",
-      height: 310,
-      type: "line", // Set the chart type to 'line'
-      toolbar: {
-        show: false, // Hide chart toolbar
-      },
-    },
-    stroke: {
-      curve: "straight", // Define the line style (straight, smooth, or step)
-      width: [2, 2], // Line width for each dataset
-    },
 
+  const activeYearData = useMemo(
+    () => yearsData.find((y) => y.year === selectedYear),
+    [yearsData, selectedYear]
+  );
+
+  const series = [
+    { name: "Advertisements", data: activeYearData?.advertisement || [] },
+    { name: "Business Listings", data: activeYearData?.business || [] },
+    { name: "Property Listings", data: activeYearData?.realEstate || [] },
+    { name: "Classified Listings", data: activeYearData?.classifieds || [] },
+    { name: "Job Listings", data: activeYearData?.job || [] },
+  ];
+
+  const options: ApexOptions = {
+    chart: {
+      type: "area",
+      height: 310,
+      toolbar: { show: false },
+      fontFamily: "Outfit, sans-serif",
+    },
+    colors: ["#465FFF", "#6246ff", "#d146ff", "#46ff7e", "#ff8d46"],
+    stroke: {
+      curve: "straight",
+      width: 2,
+    },
     fill: {
       type: "gradient",
       gradient: {
-        opacityFrom: 0.55,
+        opacityFrom: 0.5,
         opacityTo: 0,
       },
     },
     markers: {
-      size: 0, // Size of the marker points
-      strokeColors: "#fff", // Marker border color
-      strokeWidth: 2,
-      hover: {
-        size: 6, // Marker size on hover
-      },
+      size: 0,
+      hover: { size: 6 },
     },
     grid: {
-      xaxis: {
-        lines: {
-          show: false, // Hide grid lines on x-axis
-        },
-      },
-      yaxis: {
-        lines: {
-          show: true, // Show grid lines on y-axis
-        },
-      },
+      yaxis: { lines: { show: true } },
+      xaxis: { lines: { show: false } },
     },
-    dataLabels: {
-      enabled: false, // Disable data labels
-    },
-    tooltip: {
-      enabled: true, // Enable tooltip
-      x: {
-        format: "dd MMM yyyy", // Format for x-axis tooltip
-      },
-    },
+    dataLabels: { enabled: false },
     xaxis: {
-      type: "category", // Category-based x-axis
       categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
       ],
-      axisBorder: {
-        show: false, // Hide x-axis border
-      },
-      axisTicks: {
-        show: false, // Hide x-axis ticks
-      },
-      tooltip: {
-        enabled: false, // Disable tooltip for x-axis points
-      },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
     },
     yaxis: {
       labels: {
         style: {
-          fontSize: "12px", // Adjust font size for y-axis labels
-          colors: ["#6B7280"], // Color of the labels
-        },
-      },
-      title: {
-        text: "", // Remove y-axis title
-        style: {
-          fontSize: "0px",
+          fontSize: "12px",
+          colors: ["#6B7280"],
         },
       },
     },
+    tooltip: { enabled: true },
+    legend: { show: false },
   };
-  
-  const series = [
-    {
-      name: "Advertisements",
-      data: counts.advertisement,
-    },
-    {
-      name: "Business Listings",
-      data: counts.business,
-    },
-    {
-      name: "Property Listings",
-      data: counts.realEstate,
-    },
-    {
-      name: "Classified Listings",
-      data: counts.classifieds,
-    },
-    {
-      name: "Job Listings",
-      data: counts.job,
-    },
-  ];
+
+  if (loading) {
+    return <div className="p-6 text-gray-500">Loading statistics...</div>;
+  }
+
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
+    <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
-        <div className="w-full">
+        <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
             Statistics
           </h3>
-          <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
+          <p className="mt-1 text-gray-500 text-theme-sm">
             Listings added for each month
           </p>
         </div>
-        {/* <div className="flex items-start w-full gap-3 sm:justify-end">
-          <ChartTab />
-        </div> */}
+
+        <ChartTab
+          years={yearsData.map((y) => y.year)}
+          selectedYear={selectedYear}
+          onChange={setSelectedYear}
+        />
       </div>
 
-      <div className="max-w-full overflow-x-auto custom-scrollbar">
-        <div className="min-w-[1000px] xl:min-w-full">
-          <ReactApexChart
-            options={options}
-            series={series}
-            type="area"
-            height={310}
-          />
-        </div>
-      </div>
+      <ReactApexChart
+        options={options}
+        series={series}
+        type="area"
+        height={310}
+      />
     </div>
   );
 }

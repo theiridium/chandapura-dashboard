@@ -54,43 +54,46 @@ export const getUserCountOfCurrentYear = async () => {
     return monthlyCounts;
 }
 
-export const getProductCountOfCurrentYear = async (index: string) => {
-    const currentYear = new Date().getFullYear();
-
-    const start = Math.floor(new Date(`${currentYear}-01-01T00:00:00.000Z`).getTime() / 1000);
-    const end = Math.floor(new Date(`${currentYear + 1}-01-01T00:00:00.000Z`).getTime() / 1000);
+export const getProductCountByYear = async (
+    index: string,
+    year: number
+) => {
+    const start = Math.floor(
+        new Date(`${year}-01-01T00:00:00.000Z`).getTime() / 1000
+    );
+    const end = Math.floor(
+        new Date(`${year + 1}-01-01T00:00:00.000Z`).getTime() / 1000
+    );
 
     const searchParams: any[] = [{
         q: "*",
         index,
-        expFilter: false,
         publish_status: true,
         filter: [
             `created_at_timestamp >= ${start}`,
-            `created_at_timestamp < ${end}`
+            `created_at_timestamp < ${end}`,
         ],
-        hitsPerPage: 5000
+        hitsPerPage: 5000,
     }];
 
-    const search = { searchParams, page: 1 };
-    const { results } = await getSearchResult(search);
+    const { results } = await getSearchResult({ searchParams, page: 1 });
     const data = results[0].hits;
 
-    // Create an array of 12 months with count = 0
     const monthlyCounts = Array(12).fill(0);
 
     data.forEach((d: any) => {
         const date = new Date(d.createdAt);
-        const year = date.getFullYear();
-
-        // Only count for current year
-        if (year === currentYear) {
-            const month = date.getMonth(); // 0 = Jan, 11 = Dec
-            monthlyCounts[month] += 1;
+        if (date.getFullYear() === year) {
+            monthlyCounts[date.getMonth()] += 1;
         }
     });
-    return monthlyCounts;
-}
+
+    return {
+        year,
+        monthlyCounts,
+        total: monthlyCounts.reduce((a, b) => a + b, 0),
+    };
+};
 
 export const getUserCount = async () => {
     const data = await getPublicApiResponse("users/count");
