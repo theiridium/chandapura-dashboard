@@ -125,7 +125,7 @@ export default function MonthlyTarget() {
           </span>
         </div>
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-          This is feature will be enabled after listing monetization.
+          This feature will be enabled after listings monetization.
         </p>
       </div>
 

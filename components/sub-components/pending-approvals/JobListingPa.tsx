@@ -84,7 +84,7 @@ export default function JobListingPa() {
             <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
               {pendingApprovalData?.map((data) => (
                 <TableRow key={data.id} className="">
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                  <TableCell className="w-xs pr-5 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                     {data.name}
                   </TableCell>
                   <TableCell className="py-3">
