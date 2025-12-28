@@ -2,19 +2,20 @@
 import { useEffect, useState } from "react";
 import { getlListingData } from "@/lib/helper";
 import { Products } from "@/public/shared/app.config";
-import AdvertisementPa from "@/components/sub-components/pending-approvals/AdvertisementPa";
-import AdvertisementDraft from "@/components/sub-components/drafts/AdvertisementDraft";
+import BusinessListingPa from "@/components/sub-components/pending-approvals/BusinessListingPa";
+import BusinessListingDraft from "@/components/sub-components/drafts/BusinessListingDraft";
 
 export default function Page() {
   const [listingData, setListingData] = useState<any[]>();
   useEffect(() => {
     async function loadData() {
-      const data: any = await getlListingData(Products.advertisement.searchIndex);
+      const data: any = await getlListingData(Products.business.searchIndex);
       const names = ["Total", "Active", "Pending Approval", "Draft", "Inactive"]
       const mappedData: any = data.map((x: any, i: any) => ({
         ...x,
         name: names[i]
       }));
+
       setListingData(mappedData);
     }
 
@@ -22,7 +23,7 @@ export default function Page() {
   }, []);
   return (
     <div>
-      <h2 className="text-lg font-medium text-gray-800 dark:text-white mb-5 ml-5">Advertisement</h2>
+      <h2 className="text-lg font-medium text-gray-800 dark:text-white mb-5 ml-5">Business Listing</h2>
       <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
@@ -62,7 +63,7 @@ export default function Page() {
             </p>
           </div>
           <div>
-            <AdvertisementPa />
+            <BusinessListingPa />
           </div>
         </div>
       </div>
@@ -77,7 +78,7 @@ export default function Page() {
             </p>
           </div>
           <div>
-            <AdvertisementDraft />
+            <BusinessListingDraft />
           </div>
         </div>
       </div>

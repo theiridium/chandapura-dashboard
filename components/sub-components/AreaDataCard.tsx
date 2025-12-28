@@ -22,13 +22,13 @@ export default function AreaDataCard() {
             Listings Demographic
           </h3>
           <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-            Number of listings based on area
+            Top 6 Areas with maximum listings
           </p>
         </div>
       </div>
 
       <div className="space-y-5 mt-6">
-        {areaChartData?.map(((a: any, i: any) =>
+        {areaChartData?.slice(0, 6).map(((a: any, i: any) =>
           <div key={i} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div>

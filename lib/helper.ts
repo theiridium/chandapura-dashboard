@@ -102,7 +102,8 @@ export const getlListingData = async (searchIndex: string) => {
         [],
         ["step_number = 4", "publish_status = true"],
         ["step_number = 4", "publish_status = false"],
-        ["step_number < 4", "publish_status = false"]
+        ["step_number < 4", "publish_status = false"],
+        ["step_number < 4 AND publish_status = true"],
     ];
     const searchParams = filters.map(filter => ({
         q: "*",
@@ -128,6 +129,20 @@ export const getPendingApprovalListingCounts = async () => {
         filter: ["step_number = 4"],
         hitsPerPage: 100
     }));
+    const search = { searchParams, page: 1 };
+    const { results } = await getSearchResult(search);
+    return results;
+}
+
+export const getPendingApprovalListingList = async (index: string, isDraft = false) => {
+    const searchParams = [{
+        q: "*",
+        index,
+        expFilter: false,
+        publish_status: false,
+        filter: [`step_number ${isDraft ? '<' : '='} 4`],
+        hitsPerPage: 100
+    }];
     const search = { searchParams, page: 1 };
     const { results } = await getSearchResult(search);
     return results;
@@ -233,4 +248,19 @@ function buildAreaListingStats(
     }
 
     return result;
+}
+
+export const converToReadableDate = (isoDate: string) => {
+    const date = new Date(isoDate);
+
+    const formattedDate = date.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
+    return formattedDate;
 }

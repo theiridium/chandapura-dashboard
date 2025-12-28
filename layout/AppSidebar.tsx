@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
     icon: <BoxCubeIcon />,
     name: "Listings",
     subItems: [
-      { name: "Advertisement", path: "/listings/ad-listing", pro: false },
+      { name: "Advertisement", path: "/listings/advertisement", pro: false },
       { name: "Business Listing", path: "/listings/business-listing", pro: false },
       { name: "Property Listing", path: "/listings/property-listing", pro: false },
       { name: "Classified Listing", path: "/listings/classified-listing", pro: false },

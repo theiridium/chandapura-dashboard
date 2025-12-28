@@ -1,10 +1,10 @@
-import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import StatisticsChart from "@/components/ecommerce/StatisticsChart";
+import MonthlyTarget from "@/components/sub-components/MonthlyTarget";
+import StatisticsChart from "@/components/sub-components/StatisticsChart";
 import { DashboardMetricsTop } from "@/components/dashboard/DashboardMetricsTop";
 import { DashboardMetricsBottom } from "@/components/dashboard/DashboardMetricsBottom";
-import UsersChart from "@/components/ecommerce/UsersChart";
-import AreaDataCard from "@/components/ecommerce/AreaDataCard";
-import PendingApprovals from "@/components/ecommerce/PendingApprovals";
+import UsersChart from "@/components/sub-components/UsersChart";
+import AreaDataCard from "@/components/sub-components/AreaDataCard";
+import PendingApprovals from "@/components/sub-components/PendingApprovals";
 
 export default function Ecommerce() {
   return (

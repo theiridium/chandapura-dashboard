@@ -75,76 +75,90 @@ export default function AreaData() {
         </div> */}
         </div>
         <div className="max-w-full overflow-x-auto mt-6">
-          <Table>
-            {/* Table Header */}
-            <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
-              <TableRow>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Area
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Business Listings
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Propert Listings
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Classified Listings
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Job Listings
-                </TableCell>
-              </TableRow>
-            </TableHeader>
-
-            {/* Table Body */}
-
-            <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {areaTableData?.map((data) => (
-                <TableRow key={data.id} className="">
-                  <TableCell className="py-3">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {data.name}
-                        </p>
-                        <span className="text-gray-500 text-theme-xs dark:text-gray-400">
-                          {data.total} Listings
-                        </span>
-                      </div>
-                    </div>
+          {!areaTableData ? (
+            <div className="flex justify-center my-8">
+              <div className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-4 py-3 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700">
+                Loading...
+              </div>
+            </div>
+          ) : areaTableData.length === 0 ? (
+            <div className="flex justify-center my-8">
+              <div className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-4 py-3 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700">
+                No Drafts
+              </div>
+            </div>
+          ) : (
+            <Table>
+              {/* Table Header */}
+              <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
+                <TableRow>
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Area
                   </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {data.blCount}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Business Listings
                   </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {data.plCount}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Propert Listings
                   </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {data.clCount}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Classified Listings
                   </TableCell>
-                  <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                    {data.jlCount}
+                  <TableCell
+                    isHeader
+                    className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Job Listings
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+
+              {/* Table Body */}
+
+              <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
+                {areaTableData?.map((data) => (
+                  <TableRow key={data.id} className="">
+                    <TableCell className="py-3">
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                            {data.name}
+                          </p>
+                          <span className="text-gray-500 text-theme-xs dark:text-gray-400">
+                            {data.total} Listings
+                          </span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {data.blCount}
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {data.plCount}
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {data.clCount}
+                    </TableCell>
+                    <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {data.jlCount}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </div>
     </div>
